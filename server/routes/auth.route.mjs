@@ -5,10 +5,12 @@ import {
   logout,
   signup,
 } from "../controllers/auth.controller.mjs";
+import { recaptcha } from "../middlewares/recaptcha.mjs";
+
 const router = express.Router();
 
 router.get("/users", fetchUsers);
-router.post("/signup", signup);
+router.post("/signup", recaptcha, signup);
 router.post("/login", login);
 router.post("/logout", logout);
 
