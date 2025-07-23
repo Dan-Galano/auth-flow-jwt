@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha,
@@ -8,12 +8,13 @@ import { Toaster, toast } from "sonner";
 import api from "../utils/axios.js";
 
 const Form = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const { executeRecaptcha } = useGoogleReCaptcha();
 
-  const handleChange = async (value, setValue) => {
+  const handleChange = (value, setValue) => {
     setValue(value);
   };
 
@@ -23,7 +24,7 @@ const Form = () => {
       password,
       recaptchaToken,
     });
-    return response;
+    return response.data;
   };
 
   const handleSubmit = async (e) => {
@@ -34,14 +35,30 @@ const Form = () => {
       return;
     }
 
+    if (!email || !password || !confirmPassword) {
+      toast.error("Please fill out all fields.");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error("Password must contain at least 8 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
     try {
       const recaptchaToken = await executeRecaptcha("signup");
-      console.log("Got here");
       const responseRegister = await submitRegistration(recaptchaToken);
       console.log(responseRegister);
+      toast.success("Account registered.");
+      navigate("/");
     } catch (error) {
       console.error("Error during registration:", error);
-      toast.error("Registration failed.");
+      toast.error(error.response.data.error);
     }
   };
 
