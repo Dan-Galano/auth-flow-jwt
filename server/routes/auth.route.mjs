@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/users", fetchUsers);
 router.post("/signup", recaptcha, signup);
-router.post("/login", login);
+router.post("/login", recaptcha, login);
 router.post("/logout", logout);
 
 export default router;
