@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import Product from "../models/product.model.mjs";
 import { configDotenv } from "dotenv";
+import cookieParser from "cookie-parser";
 
 //routes
 import productRoute from "../routes/product.route.mjs";
@@ -11,14 +11,6 @@ configDotenv();
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-
-const users = [
-  { id: 1, username: "dgln.dev", name: "Dan" },
-  { id: 2, username: "ljsalcedo.dev", name: "Jau" },
-  { id: 3, username: "elijah.dev", name: "Elijah" },
-  { id: 4, username: "bogs.dev", name: "Elmar" },
-  { id: 5, username: "mak.dev", name: "Mak" },
-];
 
 const allowedOrigins = process.env.CLIENT_ORIGIN.split(",").map((origin) =>
   origin.trim().replace(/\/$/, "")
@@ -39,6 +31,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -55,6 +48,12 @@ app.get("/", (req, res) => {
   res.send(
     "Hello there! This is a project created by DGLN, implementing JWT Auth using MongoDB."
   );
+});
+
+app.get("/read-cookies", (req, res) => {
+  const cookies = req.cookies;
+  console.log(cookies);
+  res.json(cookies);
 });
 
 app.use("/api", authRoute);
