@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha,
 } from "react-google-recaptcha-v3";
 import api from "../utils/axios";
 import { Toaster, toast } from "sonner";
+import { useEffect } from "react";
+import { getUserFromCookie } from "../utils/cookie";
 
 const Form = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -31,6 +34,12 @@ const Form = () => {
 
     if (!executeRecaptcha) {
       toast.error("reCAPTCHA is not ready.");
+      return;
+    }
+
+    if (!email || !password) {
+      toast.error("Please fill out all fields.");
+      return;
     }
 
     try {
@@ -38,12 +47,12 @@ const Form = () => {
       console.log("got here");
 
       const responseLogin = await login(recaptchaToken);
-      console.log(responseLogin);
+      console.log(responseLogin.data);
       toast.success("Logged in!");
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Error loggin in.", error);
-
-      toast.error("Failed to login.");
+      console.error("Login failed.", error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -84,13 +93,31 @@ const Form = () => {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const fetchUser = async () => {
+    const user = await getUserFromCookie();
+    if (user) navigate("/dashboard");
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <GoogleReCaptchaProvider
       reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
     >
-      <section className="flex justify-center items-center h-dvh">
+      <section className="flex flex-col justify-center items-center h-dvh">
         <Toaster />
         <Form />
+        <div className="pt-5 text-sm text-grey ">
+          <Link to={"/"}>
+            <span className="transition-all ease-in-out duration-300 hover:text-white">
+              Return Home
+            </span>
+          </Link>
+        </div>
       </section>
     </GoogleReCaptchaProvider>
   );
