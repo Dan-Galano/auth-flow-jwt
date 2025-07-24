@@ -55,7 +55,7 @@ const Form = () => {
       const responseRegister = await submitRegistration(recaptchaToken);
       console.log(responseRegister);
       toast.success("Account registered.");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error during registration:", error);
       toast.error(error.response.data.error);
@@ -110,9 +110,16 @@ const Signup = () => {
     <GoogleReCaptchaProvider
       reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
     >
-      <section className="flex justify-center items-center h-dvh">
+      <section className="flex flex-col justify-center items-center h-dvh">
         <Toaster />
         <Form />
+        <div className="pt-4 text-sm text-grey ">
+          <Link to={"/"}>
+            <span className="transition-all ease-in-out duration-300 hover:text-white">
+              Return Home
+            </span>
+          </Link>
+        </div>
       </section>
     </GoogleReCaptchaProvider>
   );
