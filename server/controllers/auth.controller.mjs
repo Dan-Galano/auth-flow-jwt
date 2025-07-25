@@ -46,7 +46,7 @@ export const signup = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: true,
+      sameSite: "strict",
     });
 
     res.cookie("accessToken", accessToken, {
@@ -83,7 +83,7 @@ export const login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: true,
+      sameSite: "strict",
     });
 
     res.cookie("accessToken", accessToken, {
