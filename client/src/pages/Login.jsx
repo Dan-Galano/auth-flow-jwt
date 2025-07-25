@@ -106,7 +106,7 @@ const Login = () => {
 
   return (
     <GoogleReCaptchaProvider
-      reCaptchaKey={import.meta.env.RECAPTCHA_SITE_KEY}
+      reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
     >
       <section className="flex flex-col justify-center items-center h-dvh">
         <Toaster />
