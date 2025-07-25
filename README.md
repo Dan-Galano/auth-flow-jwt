@@ -23,7 +23,7 @@ JWT_PROJECT/
 - ✅ User Signup / Login / Logout
 - 🛡️ JWT-based authentication
 - 🔄 Refresh token handling
-- 🤖 Google reCAPTCHA v2 validation
+- 🤖 Google reCAPTCHA v3 validation
 - 🔐 Protected routes via access token
 - 🍪 Secure token storage using **HTTP-only cookies**
 - ⚙️ Zustand for global auth state
@@ -38,7 +38,7 @@ JWT_PROJECT/
 - Axios
 - React Router DOM
 - Zustand (global state management)
-- Google reCAPTCHA v2
+- Google reCAPTCHA v3
 
 ### Backend
 - Node.js + Express
@@ -137,7 +137,6 @@ npm run dev
 
 ### Step 1: Go to [Google reCAPTCHA Admin](https://www.google.com/recaptcha/admin/create)
 - Choose **reCAPTCHA v3**
-- Select **“I’m not a robot” checkbox**
 - Add domain(s) (for local use, add `localhost`)
 
 ### Step 2: Get Your Keys
