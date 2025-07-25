@@ -6,6 +6,7 @@ import {
 } from "react-google-recaptcha-v3";
 import { Toaster, toast } from "sonner";
 import api from "../utils/axios.js";
+import Loader from "../components/Loader.jsx";
 
 const Form = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Form = () => {
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (value, setValue) => {
     setValue(value);
@@ -51,6 +53,7 @@ const Form = () => {
     }
 
     try {
+      setIsLoading(true);
       const recaptchaToken = await executeRecaptcha("signup");
       const responseRegister = await submitRegistration(recaptchaToken);
       console.log(responseRegister);
@@ -59,6 +62,8 @@ const Form = () => {
     } catch (error) {
       console.error("Error during registration:", error);
       toast.error(error.response.data.error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,6 +72,7 @@ const Form = () => {
       onSubmit={handleSubmit}
       className="flex flex-col p-12 outline-1 gap-5 rounded-lg text-center"
     >
+      {isLoading ? <Loader /> : <></>}
       <div className="flex flex-col gap-1">
         <p className="text-h5">Forge Your Identity</p>
         <p className="text-md text-grey">Enter the realm — leave your mark.</p>
