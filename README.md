@@ -137,7 +137,6 @@ npm run dev
 
 ### Step 1: Go to [Google reCAPTCHA Admin](https://www.google.com/recaptcha/admin/create)
 - Choose **reCAPTCHA v3**
-- Select **“I’m not a robot” checkbox**
 - Add domain(s) (for local use, add `localhost`)
 
 ### Step 2: Get Your Keys
