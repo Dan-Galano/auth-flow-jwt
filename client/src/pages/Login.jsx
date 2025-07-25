@@ -48,6 +48,7 @@ const Form = () => {
 
       const responseLogin = await login(recaptchaToken);
       console.log(responseLogin.data);
+      console.log("Logged in!");
       toast.success("Logged in!");
       navigate("/dashboard");
     } catch (error) {
