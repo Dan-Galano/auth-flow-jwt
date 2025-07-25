@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   GoogleReCaptchaProvider,
@@ -8,11 +8,13 @@ import api from "../utils/axios";
 import { Toaster, toast } from "sonner";
 import { useEffect } from "react";
 import { getUserFromCookie } from "../utils/cookie";
+import Loader from "../components/Loader";
 
 const Form = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleValueChange = (value, setValue) => {
@@ -43,6 +45,7 @@ const Form = () => {
     }
 
     try {
+      setIsLoading(true);
       const recaptchaToken = await executeRecaptcha("login");
       console.log("got here");
 
@@ -54,6 +57,8 @@ const Form = () => {
     } catch (error) {
       console.error("Login failed.", error);
       toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,6 +67,7 @@ const Form = () => {
       onSubmit={handleLogin}
       className="flex flex-col p-12 outline-1 gap-5 rounded-lg text-center"
     >
+      {isLoading ? <Loader /> : <></>}
       <div className="flex flex-col gap-1">
         <p className="text-h5">Enter the Portal</p>
         <p className="text-md text-grey">Prove your worth to step inside.</p>
