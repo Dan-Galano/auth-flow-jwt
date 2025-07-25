@@ -1,25 +1,33 @@
 # 🔐 JWT Authentication Project (MERN Stack)
 
-A simple authentication system built using the MERN stack (MongoDB, Express, React, Node.js) and **JSON Web Tokens (JWT)**. It supports user signup, login, logout, and protected routes.
+A robust authentication system built with the **MERN stack** (MongoDB, Express, React, Node.js) using **JSON Web Tokens (JWT)**. It supports secure login/signup, refresh tokens, reCAPTCHA validation, and protected routes with HTTP-only cookies.
+
+Deployed on:
+- 🌐 Frontend: [Vercel](https://vercel.com/)
+- 🛠️ Backend: [Render](https://render.com/)
+
+---
 
 ## 📁 Project Structure
 
 ```
 JWT_PROJECT/
-├── client/      # React frontend
-└── server/      # Express backend with JWT authentication
+├── client/      # React frontend (Vercel)
+└── server/      # Express backend (Render)
 ```
 
 ---
 
 ## 🚀 Features
 
-- User Signup, Login, Logout
-- JWT-based authentication
-- Protected routes (backend)
-- React frontend with form handling
-- Secure token storage using HTTP-only cookies or localStorage (depending on setup)
-- Easily extensible for role-based auth, sessions, and user profiles
+- ✅ User Signup / Login / Logout
+- 🛡️ JWT-based authentication
+- 🔄 Refresh token handling
+- 🤖 Google reCAPTCHA v2 validation
+- 🔐 Protected routes via access token
+- 🍪 Secure token storage using **HTTP-only cookies**
+- ⚙️ Zustand for global auth state
+- 🌍 Environment-aware (dev/production-ready)
 
 ---
 
@@ -29,13 +37,16 @@ JWT_PROJECT/
 - React
 - Axios
 - React Router DOM
+- Zustand (global state management)
+- Google reCAPTCHA v2
 
 ### Backend
 - Node.js + Express
 - MongoDB + Mongoose
 - JSON Web Token (JWT)
-- bcrypt for password hashing
-- dotenv for environment variables
+- bcrypt (password hashing)
+- dotenv (env vars)
+- cookie-parser
 
 ---
 
@@ -43,28 +54,34 @@ JWT_PROJECT/
 
 ### 1. Clone the Repository
 
-```
+```bash
 git clone https://github.com/Dan-Galano/auth-flow-jwt.git
-cd jwt-auth-project
+cd auth-flow-jwt
 ```
 
 ---
 
 ### 2. Setup Environment Variables
 
-Create `.env` files for both folders (`client/.env` and `server/.env`):
-
 #### `server/.env`
+
 ```env
+NODE_ENV=development
 PORT=5000
 CLIENT_ORIGIN=http://localhost:5173/
 MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+JWT_ACCESS_TOKEN_SECRET=your_jwt_access_token_secret
+JWT_REFRESH_TOKEN_SECRET=your_jwt_refresh_token_secret
 ```
 
+> 🔐 Set `NODE_ENV=production` when deploying to Render
+
 #### `client/.env`
+
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_BASE_URL=http://localhost:5000
+VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 ```
 
 ---
@@ -72,64 +89,92 @@ VITE_API_URL=http://localhost:5000
 ### 3. Install Dependencies
 
 #### Backend
-```
+```bash
 cd server
 npm install
 ```
 
 #### Frontend
-```
+```bash
 cd client
 npm install
 ```
 
 ---
 
-### 4. Run the Application Locally
+### 4. Run the App Locally
 
-#### Start the backend
-```
+#### Start backend
+```bash
 cd server
+npm run start:dev
+```
+
+#### Start frontend
+```bash
+cd client
 npm run dev
 ```
 
-#### Start the frontend
-```
-cd client
-npm start
-```
-
-Your app should now be running at `http://localhost:5173` (React) and `http://localhost:5000` (API).
+- Frontend: `http://localhost:5173`
+- API: `http://localhost:5000`
 
 ---
 
 ## 🌐 Deployment Notes
 
-- **Frontend**: Deploy `client/` to [Vercel](https://vercel.com/)
-- **Backend**: Deploy `server/` to [Render](https://render.com/), [Railway](https://railway.app/), or similar
-- Update the frontend `.env` file (`VITE_API_URL`) to point to the hosted backend API
+- **Frontend**: Deploy `/client` to **Vercel**
+  - Update `VITE_API_BASE_URL` to Render backend URL
+
+- **Backend**: Deploy `/server` to **Render**
+  - Add env vars in Render dashboard
+  - Update `CLIENT_ORIGIN` to deployed Vercel URL (e.g. `https://yourapp.vercel.app`)
+  - Set `NODE_ENV=production`
 
 ---
 
-## 🧾 Example API Routes
+## 🤖 How to Set Up Google reCAPTCHA
 
-| Method | Endpoint         | Description         |
-|--------|------------------|---------------------|
-| POST   | `/api/signup`    | Create a new user   |
-| POST   | `/api/login`     | Authenticate user   |
-| POST   | `/api/logout`    | Log out user        |
-| GET    | `/api/protected` | Protected resource  |
+### Step 1: Go to [Google reCAPTCHA Admin](https://www.google.com/recaptcha/admin/create)
+- Choose **reCAPTCHA v3**
+- Select **“I’m not a robot” checkbox**
+- Add domain(s) (for local use, add `localhost`)
+
+### Step 2: Get Your Keys
+- **Site Key** → add to `client/.env` → `VITE_RECAPTCHA_SITE_KEY`
+- **Secret Key** → add to `server/.env` → `RECAPTCHA_SECRET_KEY`
 
 ---
 
-## 🛡️ Security Notes
+## 🔗 API Routes
 
-- Passwords are hashed using bcrypt before being stored.
-- JWTs are signed and optionally stored in **HTTP-only cookies** for security.
-- Make sure to keep `JWT_SECRET` and `.env` files out of version control.
+| Method | Endpoint            | Middleware             | Description               |
+|--------|---------------------|------------------------|---------------------------|
+| `GET`  | `/api/user-info`    | `verifyToken`          | Fetch user info (protected) |
+| `GET`  | `/api/refresh-token`| —                      | Refresh access token      |
+| `POST` | `/api/signup`       | `recaptcha`            | Register new user         |
+| `POST` | `/api/login`        | `recaptcha`            | Log in user               |
+| `POST` | `/api/logout`       | —                      | Clear cookies, log out    |
+
+---
+
+## 🔐 Security Highlights
+
+- ✅ Passwords hashed using `bcrypt`
+- ✅ JWTs signed with secrets
+- ✅ Tokens stored in HTTP-only cookies (not accessible via JS)
+- ✅ reCAPTCHA prevents bot signup/login
+- ✅ `sameSite: "None"` and `secure: true` used for cross-origin cookies (Vercel ↔ Render)
+
+---
+
+## 📌 Tips
+
+- Frontend should always send requests with `withCredentials: true` using Axios.
+- Backend must set `Access-Control-Allow-Credentials: true` in CORS.
 
 ---
 
 ## ✨ Author
 
-Made by Dan Galano
+Made by [Dan Galano](https://github.com/Dan-Galano)
