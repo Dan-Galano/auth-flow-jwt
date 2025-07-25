@@ -23,7 +23,7 @@ JWT_PROJECT/
 - ✅ User Signup / Login / Logout
 - 🛡️ JWT-based authentication
 - 🔄 Refresh token handling
-- 🤖 Google reCAPTCHA v2 validation
+- 🤖 Google reCAPTCHA v3 validation
 - 🔐 Protected routes via access token
 - 🍪 Secure token storage using **HTTP-only cookies**
 - ⚙️ Zustand for global auth state
@@ -38,7 +38,7 @@ JWT_PROJECT/
 - Axios
 - React Router DOM
 - Zustand (global state management)
-- Google reCAPTCHA v2
+- Google reCAPTCHA v3
 
 ### Backend
 - Node.js + Express
